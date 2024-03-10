@@ -11,14 +11,16 @@ public class Account {
     private @Id
     @GeneratedValue Long id;
     private String handle;
-    private String name;
+    private String firstName;
+    private String lastName;
 
     Account() {}
 
-    Account(String handle, String name) {
+    Account(String handle, String firstName, String lastName) {
 
         this.handle = handle;
-        this.name = name;
+        this.firstName = firstName;
+        this.lastName = lastName;
     }
 
     public Long getId() {
@@ -38,11 +40,13 @@ public class Account {
     }
 
     public String getName() {
-        return name;
+        return this.firstName + " " + this.lastName;
     }
 
     public void setName(String name) {
-        this.name = name;
+        String[] parts = name.split(" ");
+        this.firstName = parts[0];
+        this.lastName = parts[1];
     }
 
     @Override
@@ -54,16 +58,32 @@ public class Account {
             return false;
         Account account = (Account) o;
         return Objects.equals(this.id, account.id) && Objects.equals(this.handle, account.handle)
-                && Objects.equals(this.name, account.name);
+                && Objects.equals(this.firstName, account.firstName) && Objects.equals(this.lastName, account.lastName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.id, this.handle, this.name);
+        return Objects.hash(this.id, this.handle, this.firstName, this.lastName);
     }
 
     @Override
     public String toString() {
-        return "account{" + "id=" + this.id + ", handle='" + this.handle + '\'' + ", name='" + this.name + '\'' + '}';
+        return "account{" + "id=" + this.id + ", handle='" + this.handle + '\'' + ", firstName='" + this.firstName + '\'' + ", lastName='" + this.lastName + "\'" + '}';
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 }

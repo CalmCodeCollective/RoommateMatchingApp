@@ -5,6 +5,8 @@ import com.calmcodecollective.roommatematcher.model.roommate.Account;
 import com.calmcodecollective.roommatematcher.model.roommate.AccountRepository;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,8 +42,11 @@ public class AccountController {
     // end::get-aggregate-root[]
 
     @PostMapping("/accounts")
-    Account newAccount(@RequestBody Account newAccount) {
-        return repository.save(newAccount);
+    ResponseEntity<?> newAccount(@RequestBody Account newAccount) {
+        EntityModel<Account> entityModel = assembler.toModel(repository.save(newAccount));
+        return ResponseEntity
+                .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
+                .body(entityModel);
     }
 
     // Single item
