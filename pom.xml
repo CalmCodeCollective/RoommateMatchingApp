@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.calmcodecollective</groupId>
-	<artifactId>account-matcher</artifactId>
+	<artifactId>roommate-matcher</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>account-matcher</name>
+	<name>roommate-matcher</name>
 	<description>Roommate matcher app</description>
 	<properties>
 		<java.version>17</java.version>
