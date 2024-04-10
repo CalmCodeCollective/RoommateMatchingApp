@@ -31,16 +31,24 @@ public class AccountController {
         this.assembler = assembler;
     }
 
-    // Aggregate root
-    // tag::get-aggregate-root[]
+    /**
+     * Get all accounts
+     *
+     * @return accounts
+     */
     @GetMapping("/accounts")
     CollectionModel<EntityModel<Account>> all() {
         List<EntityModel<Account>> accounts = repository.findAll().stream().map(assembler::toModel).collect(Collectors.toList());
 
         return CollectionModel.of(accounts, linkTo(methodOn(AccountController.class).all()).withSelfRel());
     }
-    // end::get-aggregate-root[]
 
+    /**
+     * Create new Account
+     *
+     * @param newAccount
+     * @return account
+     */
     @PostMapping("/accounts")
     ResponseEntity<?> newAccount(@RequestBody Account newAccount) {
         EntityModel<Account> entityModel = assembler.toModel(repository.save(newAccount));
@@ -49,8 +57,12 @@ public class AccountController {
                 .body(entityModel);
     }
 
-    // Single item
-
+    /**
+     * Get account
+     *
+     * @param id
+     * @return account
+     */
     @GetMapping("/accounts/{id}")
     EntityModel<Account> one(@PathVariable Long id) {
 
@@ -59,10 +71,17 @@ public class AccountController {
         return assembler.toModel(account);
     }
 
+    /**
+     * Update account
+     *
+     * @param newAccount
+     * @param id
+     * @return updated account
+     */
     @PutMapping("/accounts/{id}")
-    Account replaceAccount(@RequestBody Account newAccount, @PathVariable Long id) {
+    ResponseEntity<?> replaceAccount(@RequestBody Account newAccount, @PathVariable Long id) {
 
-        return repository.findById(id)
+        Account updateAccount = repository.findById(id)
                 .map(account -> {
                     account.setHandle(newAccount.getHandle());
                     account.setName(newAccount.getName());
@@ -72,10 +91,21 @@ public class AccountController {
                     newAccount.setId(id);
                     return repository.save(newAccount);
                 });
+        EntityModel<Account> entityModel = assembler.toModel(updateAccount);
+        return ResponseEntity
+                .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
+                .body(entityModel);
     }
 
+    /**
+     * Delete account
+     *
+     * @param id
+     * @return
+     */
     @DeleteMapping("/accounts/{id}")
-    void deleteAccount(@PathVariable Long id) {
+    ResponseEntity<?> deleteAccount(@PathVariable Long id) {
         repository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }
